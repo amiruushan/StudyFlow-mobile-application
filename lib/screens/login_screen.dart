@@ -150,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isPasswordHidden = true;
 
   Future<void> loginUser() async {
 
@@ -184,66 +185,162 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
 
-      appBar: AppBar(
-        title: const Text("Login"),
-      ),
+      backgroundColor: const Color(0xFFF5F7FB),
 
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+      body: SafeArea(
 
-        child: Column(
+        child: Center(
 
-          mainAxisAlignment: MainAxisAlignment.center,
+          child: SingleChildScrollView(
 
-          children: [
+            padding: const EdgeInsets.all(24),
 
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(),
-              ),
-            ),
+            child: Column(
 
-            const SizedBox(height: 20),
+              mainAxisAlignment: MainAxisAlignment.center,
 
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: "Password",
-                border: OutlineInputBorder(),
-              ),
-            ),
+              children: [
 
-            const SizedBox(height: 20),
+                // Logo
+                Container(
 
-            SizedBox(
-              width: double.infinity,
+                  padding: const EdgeInsets.all(20),
 
-              child: ElevatedButton(
-                onPressed: loginUser,
-                child: const Text("Login"),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            TextButton(
-              onPressed: () {
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SignupScreen(),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade100,
+                    shape: BoxShape.circle,
                   ),
-                );
 
-              },
-              child: const Text("Create New Account"),
-            )
+                  child: const Icon(
+                    Icons.school,
+                    size: 60,
+                    color: Colors.blue,
+                  ),
+                ),
 
-          ],
+                const SizedBox(height: 30),
+
+                const Text(
+                  "StudyFlow",
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                const Text(
+                  "Welcome Back",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey,
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+
+                // Email
+                TextField(
+                  controller: emailController,
+
+                  decoration: InputDecoration(
+
+                    hintText: "Enter your email",
+
+                    prefixIcon: const Icon(Icons.email),
+
+                    filled: true,
+                    fillColor: Colors.white,
+
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Password
+                TextField(
+
+                  controller: passwordController,
+                  obscureText: true,
+
+                  decoration: InputDecoration(
+
+                    hintText: "Enter your password",
+
+                    prefixIcon: const Icon(Icons.lock),
+
+                    filled: true,
+                    fillColor: Colors.white,
+
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                // Login Button
+                SizedBox(
+
+                  width: double.infinity,
+                  height: 55,
+
+                  child: ElevatedButton(
+
+                    onPressed: loginUser,
+
+                    style: ElevatedButton.styleFrom(
+
+                      backgroundColor: Colors.blue,
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                TextButton(
+
+                  onPressed: () {
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignupScreen(),
+                      ),
+                    );
+
+                  },
+
+                  child: const Text(
+                    "Create New Account",
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
