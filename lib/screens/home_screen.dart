@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'add_task_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -178,6 +179,26 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+
+        onPressed: () {
+
+          Navigator.push(
+
+            context,
+
+            MaterialPageRoute(
+              builder: (context) => const AddTaskScreen(),
+            ),
+          );
+
+        },
+
+        backgroundColor: Colors.blue,
+
+        child: const Icon(Icons.add),
+
       ),
     );
   }
