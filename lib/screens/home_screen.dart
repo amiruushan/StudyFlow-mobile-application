@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'add_task_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -56,70 +57,8 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // Study Progress Card
-            Container(
-
-              width: double.infinity,
-
-              padding: const EdgeInsets.all(20),
-
-              decoration: BoxDecoration(
-
-                color: Colors.blue,
-
-                borderRadius: BorderRadius.circular(24),
-
-              ),
-
-              child: Column(
-
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-
-                  const Text(
-                    "Today's Progress",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  const Text(
-                    "4 / 6 Tasks Completed",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  ClipRRect(
-
-                    borderRadius: BorderRadius.circular(20),
-
-                    child: LinearProgressIndicator(
-
-                      value: 0.7,
-
-                      minHeight: 10,
-
-                      backgroundColor: Colors.white24,
-
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
             const Text(
-              "Quick Actions",
+              "Your Tasks",
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -127,6 +66,134 @@ class HomeScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
+
+            Expanded(
+
+              child: StreamBuilder(
+
+                stream: FirebaseFirestore.instance
+                    .collection("tasks")
+                    .orderBy("createdAt", descending: true) //new tasks show in top
+                    .snapshots(),
+
+                builder: (context, snapshot) {
+
+                  // Loading
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  // No Data
+                  if (!snapshot.hasData ||
+                      snapshot.data!.docs.isEmpty) {
+
+                    return const Center(
+                      child: Text(
+                        "No Tasks Yet",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    );
+                  }
+
+                  final tasks = snapshot.data!.docs;
+
+                  return ListView.builder(
+
+                    itemCount: tasks.length,
+
+                    itemBuilder: (context, index) {
+
+                      final task = tasks[index];
+
+                      return Dismissible(
+
+                          key: Key(task.id),
+
+                          direction: DismissDirection.endToStart,
+
+                          onDismissed: (direction) async {
+
+                            await FirebaseFirestore.instance
+                                .collection("tasks")
+                                .doc(task.id)
+                                .delete();
+
+                          },
+
+                          background: Container(
+
+                            alignment: Alignment.centerRight,
+
+                            padding: const EdgeInsets.only(right: 20),
+
+                            decoration: BoxDecoration(
+
+                              color: Colors.red,
+
+                              borderRadius: BorderRadius.circular(20),
+
+                            ),
+
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                          child: Container(
+                        
+                            margin: const EdgeInsets.only(bottom: 15),
+                        
+                            padding: const EdgeInsets.all(20),
+                        
+                            decoration: BoxDecoration(
+                        
+                            color: Colors.white,
+                        
+                            borderRadius: BorderRadius.circular(20),
+                        
+                            ),
+                        
+                          child: Row(
+                        
+                            children: [
+                        
+                              CircleAvatar(
+                                backgroundColor:
+                                Colors.blue.withOpacity(0.2),
+                        
+                                child: const Icon(
+                                  Icons.task_alt,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                        
+                              const SizedBox(width: 15),
+                        
+                              Expanded(
+                        
+                                child: Text(
+                        
+                                  task['title'],
+                        
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
 
             Row(
 
