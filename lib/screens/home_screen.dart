@@ -109,6 +109,8 @@ class HomeScreen extends StatelessWidget {
 
                       final task = tasks[index];
 
+                      final isDone = task['isDone'];
+
                       return Dismissible(
 
                           key: Key(task.id),
@@ -143,51 +145,83 @@ class HomeScreen extends StatelessWidget {
                               color: Colors.white,
                             ),
                           ),
-                          child: Container(
-                        
-                            margin: const EdgeInsets.only(bottom: 15),
-                        
-                            padding: const EdgeInsets.all(20),
-                        
-                            decoration: BoxDecoration(
-                        
-                            color: Colors.white,
-                        
-                            borderRadius: BorderRadius.circular(20),
-                        
-                            ),
-                        
-                          child: Row(
-                        
-                            children: [
-                        
-                              CircleAvatar(
-                                backgroundColor:
-                                Colors.blue.withOpacity(0.2),
-                        
-                                child: const Icon(
-                                  Icons.task_alt,
-                                  color: Colors.blue,
-                                ),
+                          child: GestureDetector(
+                            onTap: () async {
+
+                              await FirebaseFirestore.instance
+                                  .collection("tasks")
+                                  .doc(task.id)
+                                  .update({
+
+                                "isDone": !isDone,
+
+                              });
+
+                            },
+
+                            child: Container(
+
+                              margin: const EdgeInsets.only(bottom: 15),
+
+                              padding: const EdgeInsets.all(20),
+
+                              decoration: BoxDecoration(
+
+                              color: Colors.white,
+
+                              borderRadius: BorderRadius.circular(20),
+
                               ),
-                        
-                              const SizedBox(width: 15),
-                        
-                              Expanded(
-                        
-                                child: Text(
-                        
-                                  task['title'],
-                        
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
+
+                            child: Row(
+
+                              children: [
+
+                                CircleAvatar(
+                                  backgroundColor:
+                                  Colors.blue.withOpacity(0.2),
+
+                                  child: Icon(
+
+                                    isDone
+                                        ? Icons.check_circle
+                                        : Icons.task_alt,
+
+                                    color:
+                                    isDone
+                                        ? Colors.green
+                                        : Colors.blue,
                                   ),
                                 ),
-                              ),
-                            ],
+
+                                const SizedBox(width: 15),
+
+                                Expanded(
+
+                                  child: Text(
+
+                                    task['title'],
+
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+
+                                      decoration:
+                                      isDone
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
+
+                                      color:
+                                      isDone
+                                          ? Colors.grey
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                                                    ),
                           ),
-                        ),
                       );
                     },
                   );

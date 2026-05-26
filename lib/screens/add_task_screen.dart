@@ -20,6 +20,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     await FirebaseFirestore.instance.collection("tasks").add({
 
       "title": taskController.text.trim(),
+      "isDone": false,
       "createdAt": Timestamp.now(),
 
     });
