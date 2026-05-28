@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'add_task_screen.dart';
 import 'login_screen.dart';
+import 'edit_task_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -193,60 +194,75 @@ class HomeScreen extends StatelessWidget {
 
                               decoration: BoxDecoration(
 
-                              color: Colors.white,
+                                color: Colors.white,
 
-                              borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(20),
 
                               ),
 
-                            child: Row(
+                              child: Row(
 
-                              children: [
+                                children: [
 
-                                CircleAvatar(
-                                  backgroundColor:
-                                  Colors.blue.withOpacity(0.2),
+                                  CircleAvatar(
+                                    backgroundColor:
+                                    Colors.blue.withOpacity(0.2),
 
-                                  child: Icon(
+                                    child: Icon(
 
-                                    isDone
-                                        ? Icons.check_circle
-                                        : Icons.task_alt,
-
-                                    color:
-                                    isDone
-                                        ? Colors.green
-                                        : Colors.blue,
-                                  ),
-                                ),
-
-                                const SizedBox(width: 15),
-
-                                Expanded(
-
-                                  child: Text(
-
-                                    task['title'],
-
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-
-                                      decoration:
                                       isDone
-                                          ? TextDecoration.lineThrough
-                                          : TextDecoration.none,
+                                          ? Icons.check_circle
+                                          : Icons.task_alt,
 
                                       color:
                                       isDone
-                                          ? Colors.grey
-                                          : Colors.black,
+                                          ? Colors.green
+                                          : Colors.blue,
                                     ),
                                   ),
-                                ),
-                              ],
+
+                                  const SizedBox(width: 15),
+
+                                  Expanded(
+
+                                    child: Text(
+
+                                      task['title'],
+
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+
+                                        decoration:
+                                        isDone ? TextDecoration.lineThrough : TextDecoration.none,
+
+                                        color:
+                                        isDone ? Colors.grey : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+
+                                  IconButton(onPressed: (){
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditTaskScreen(
+                                              taskId: task.id,
+                                              oldTitle: task['title']
+                                          )
+                                      )
+                                    );
+
+                                  },
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.orange,
+                                      ),
+                                  ),
+                                ],
+                              ),
                             ),
-                                                    ),
                           ),
                       );
                     },
