@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'add_task_screen.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final currentUser = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
 
@@ -20,6 +24,27 @@ class HomeScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+
+        actions: [
+
+          IconButton(
+
+            onPressed: () async {
+
+              await FirebaseAuth.instance.signOut();
+
+              // Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+              );
+            },
+
+            icon: const Icon(Icons.logout),
+          ),
+        ],
 
         backgroundColor: Colors.white,
 
@@ -73,7 +98,8 @@ class HomeScreen extends StatelessWidget {
 
                 stream: FirebaseFirestore.instance
                     .collection("tasks")
-                    .orderBy("createdAt", descending: true) //new tasks show in top
+                    .where("userId", isEqualTo: currentUser!.uid,)
+                    // .orderBy("createdAt", descending: true,)
                     .snapshots(),
 
                 builder: (context, snapshot) {
@@ -284,7 +310,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
 
         onPressed: () {
-
+          print('add btn');
           Navigator.push(
 
             context,

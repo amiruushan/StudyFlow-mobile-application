@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -21,6 +22,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
       "title": taskController.text.trim(),
       "isDone": false,
+      "userId":
+      FirebaseAuth.instance.currentUser!.uid,
       "createdAt": Timestamp.now(),
 
     });
