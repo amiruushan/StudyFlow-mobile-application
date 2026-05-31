@@ -5,11 +5,13 @@ class EditTaskScreen extends StatefulWidget {
 
   final String taskId;
   final String oldTitle;
+  final Timestamp oldDueDate;
 
   const EditTaskScreen({
     super.key,
     required this.taskId,
     required this.oldTitle,
+    required this.oldDueDate
   });
 
   @override
@@ -19,6 +21,7 @@ class EditTaskScreen extends StatefulWidget {
 class _EditTaskScreenState extends State<EditTaskScreen> {
 
   late TextEditingController taskController;
+  DateTime? selectedDate;
 
   @override
   void initState() {
@@ -27,6 +30,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
 
     taskController =
         TextEditingController(text: widget.oldTitle);
+        selectedDate = widget.oldDueDate.toDate();
 
   }
 

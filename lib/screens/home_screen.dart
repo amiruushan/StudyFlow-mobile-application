@@ -273,7 +273,8 @@ class HomeScreen extends StatelessWidget {
                                       MaterialPageRoute(
                                           builder: (context) => EditTaskScreen(
                                               taskId: task.id,
-                                              oldTitle: task['title']
+                                              oldTitle: task['title'],
+                                            oldDueDate: task['dueDate'],
                                           )
                                       )
                                     );
