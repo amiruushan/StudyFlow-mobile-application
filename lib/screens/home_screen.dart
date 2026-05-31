@@ -225,20 +225,44 @@ class HomeScreen extends StatelessWidget {
 
                                   Expanded(
 
-                                    child: Text(
+                                    child: Column(
 
-                                      task['title'],
+                                      crossAxisAlignment: CrossAxisAlignment.start,
 
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
+                                      children: [
 
-                                        decoration:
-                                        isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                                        Text(
 
-                                        color:
-                                        isDone ? Colors.grey : Colors.black,
-                                      ),
+                                          task['title'],
+
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+
+                                            decoration:
+                                            isDone
+                                                ? TextDecoration.lineThrough
+                                                : TextDecoration.none,
+
+                                            color:
+                                            isDone
+                                                ? Colors.grey
+                                                : Colors.black,
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 4),
+
+                                        Text(
+
+                                          "Due: ${task['dueDate'].toDate().day}/${task['dueDate'].toDate().month}/${task['dueDate'].toDate().year}",
+
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
 

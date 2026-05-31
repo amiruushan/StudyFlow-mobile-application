@@ -14,6 +14,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final TextEditingController taskController =
   TextEditingController();
 
+  DateTime? selectedDate;
+
+  Future<void> pickDate() async {
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2035),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    }
+  }
+
   Future<void> saveTask() async {
 
     if (taskController.text.isEmpty) return;
@@ -25,6 +43,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       "userId":
       FirebaseAuth.instance.currentUser!.uid,
       "createdAt": Timestamp.now(),
+      "dueDate": selectedDate
 
     });
 
@@ -64,6 +83,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
                 ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+
+              onPressed: pickDate,
+
+              child: Text(
+
+                selectedDate == null
+                    ? "Select Due Date"
+                    : "Due: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+
               ),
             ),
 
