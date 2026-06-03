@@ -1,19 +1,154 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class SubjectScreen extends StatelessWidget {
+class SubjectScreen extends StatefulWidget {
   const SubjectScreen({super.key});
+
+  @override
+  State<SubjectScreen> createState() => _SubjectScreenState();
+
+}
+
+class _SubjectScreenState extends State<SubjectScreen> {
+
+  final TextEditingController subjectController = TextEditingController();
+
+  Future<void> addSubject() async {
+
+    if (subjectController.text.trim().isEmpty) {
+      return;
+    }
+
+    await FirebaseFirestore.instance
+        .collection("subjects")
+        .add({
+
+      "name": subjectController.text.trim(),
+
+      "userId":
+      FirebaseAuth.instance.currentUser!.uid,
+
+      "createdAt": Timestamp.now(),
+
+    });
+
+    subjectController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         title: const Text("Subjects"),
       ),
-      body: const Center(
-        child: Text(
-          "No Subjects Yet",
-          style: TextStyle(fontSize: 20),
-        ),
+
+      body: StreamBuilder(
+
+        stream: FirebaseFirestore.instance
+            .collection("subjects")
+            .where(
+          "userId",
+          isEqualTo: FirebaseAuth.instance.currentUser!.uid,
+        )
+            .snapshots(),
+
+        builder: (context, snapshot) {
+
+          if (snapshot.connectionState ==
+              ConnectionState.waiting) {
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (!snapshot.hasData ||
+              snapshot.data!.docs.isEmpty) {
+
+            return const Center(
+              child: Text(
+                "No Subjects Yet",
+                style: TextStyle(fontSize: 20),
+              ),
+            );
+          }
+
+          final subjects = snapshot.data!.docs;
+
+          return ListView.builder(
+
+            itemCount: subjects.length,
+
+            itemBuilder: (context, index) {
+
+              final subject = subjects[index];
+
+              return ListTile(
+
+                leading: const Icon(Icons.book),
+
+                title: Text(subject['name']),
+              );
+            },
+          );
+        },
+      ),
+
+      floatingActionButton: FloatingActionButton(
+
+        onPressed: () {
+
+          showDialog(
+
+            context: context,
+
+            builder: (context) {
+
+              return AlertDialog(
+
+                title: const Text("Add Subject"),
+
+                content: TextField(
+
+                  controller: subjectController,
+
+                  decoration: const InputDecoration(
+                    hintText: "Enter Subject Name",
+                  ),
+                ),
+
+                actions: [
+
+                  TextButton(
+
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+
+                    child: const Text("Cancel"),
+                  ),
+
+                  ElevatedButton(
+
+                    onPressed: () async {
+
+                      await addSubject();
+
+                      Navigator.pop(context);
+
+                    },
+
+                    child: const Text("Add"),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+
+        child: const Icon(Icons.add),
       ),
     );
   }
