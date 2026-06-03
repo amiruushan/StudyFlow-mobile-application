@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'add_task_screen.dart';
 import 'login_screen.dart';
 import 'edit_task_screen.dart';
+import 'subject_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -127,10 +128,17 @@ class HomeScreen extends StatelessWidget {
                   }
 
                   final tasks = snapshot.data!.docs;
+                  final totalTasks = tasks.length;
+                  final completedTasks  = tasks.where((task) => task['isDone'] == true).length;
+                  final pendingTasks = tasks.where((task) => task['isDone']==false).length;
+
+                  final progress = totalTasks == 0
+                      ? 0.0
+                      : completedTasks / totalTasks;
 
                   return ListView.builder(
 
-                    itemCount: tasks.length,
+                    itemCount: totalTasks,
 
                     itemBuilder: (context, index) {
 
@@ -301,10 +309,24 @@ class HomeScreen extends StatelessWidget {
               children: [
 
                 Expanded(
-                  child: buildActionCard(
-                    Icons.book,
-                    "Subjects",
-                    Colors.orange,
+                  child: GestureDetector(
+
+                    onTap: () {
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SubjectScreen(),
+                        ),
+                      );
+
+                    },
+
+                    child: buildActionCard(
+                      Icons.book,
+                      "Subjects",
+                      Colors.orange,
+                    ),
                   ),
                 ),
 

@@ -34,6 +34,27 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
 
   }
 
+  Future<void> pickDate() async {
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2035),
+    );
+
+    if (pickedDate != null) {
+
+      setState(() {
+
+        selectedDate = pickedDate;
+
+      });
+
+    }
+
+  }
+
   Future<void> updateTask() async {
 
     if (taskController.text.trim().isEmpty) {
@@ -46,6 +67,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         .update({
 
       "title": taskController.text.trim(),
+      "dueDate": selectedDate,
 
     });
 
@@ -78,6 +100,22 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 labelText: "Task Title",
                 border: OutlineInputBorder(),
               ),
+            ),
+
+            const SizedBox(height: 20),
+
+            ElevatedButton(
+
+              onPressed: pickDate,
+
+              child: Text(
+
+                selectedDate == null
+                    ? "Select Due Date"
+                    : "Due: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+
+              ),
+
             ),
 
             const SizedBox(height: 20),
