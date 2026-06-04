@@ -15,6 +15,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   TextEditingController();
 
   DateTime? selectedDate;
+  String? selectedSubject;
 
   Future<void> pickDate() async {
 
@@ -101,6 +102,57 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   borderSide: BorderSide.none,
                 ),
               ),
+            ),
+
+            const SizedBox(height: 20),
+
+            StreamBuilder<QuerySnapshot>(
+
+              stream: FirebaseFirestore.instance
+                  .collection("subjects")
+                  .where(
+                "userId",
+                isEqualTo: FirebaseAuth.instance.currentUser!.uid,
+              )
+                  .snapshots(),
+
+              builder: (context, snapshot) {
+
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
+                }
+
+                final subjects = snapshot.data!.docs;
+
+                return DropdownButtonFormField<String>(
+
+                  value: selectedSubject,
+
+                  decoration: const InputDecoration(
+                    labelText: "Select Subject",
+                    border: OutlineInputBorder(),
+                  ),
+
+                  items: subjects.map((subject) {
+
+                    return DropdownMenuItem<String>(
+
+                      value: subject['name'],
+
+                      child: Text(subject['name']),
+                    );
+
+                  }).toList(),
+
+                  onChanged: (value) {
+
+                    setState(() {
+                      selectedSubject = value;
+                    });
+
+                  },
+                );
+              },
             ),
 
             const SizedBox(height: 20),

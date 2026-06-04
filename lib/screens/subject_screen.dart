@@ -85,11 +85,107 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
               final subject = subjects[index];
 
-              return ListTile(
+              return Dismissible(
 
-                leading: const Icon(Icons.book),
+                key: Key(subject.id),
 
-                title: Text(subject['name']),
+                direction: DismissDirection.endToStart,
+
+                onDismissed: (direction) async {
+
+                  await FirebaseFirestore.instance
+                      .collection("subjects")
+                      .doc(subject.id)
+                      .delete();
+
+                },
+
+                background: Container(
+
+                  color: Colors.red,
+
+                  alignment: Alignment.centerRight,
+
+                  padding: const EdgeInsets.only(right: 20),
+
+                  child: const Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+
+                child: ListTile(
+
+                  leading: const Icon(Icons.book),
+
+                  title: Text(subject['name']),
+
+                  trailing: IconButton(
+
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.orange,
+                    ),
+
+                    onPressed: () {
+
+                      final editController =
+                      TextEditingController(
+                        text: subject['name'],
+                      );
+
+                      showDialog(
+
+                        context: context,
+
+                        builder: (context) {
+
+                          return AlertDialog(
+
+                            title: const Text("Edit Subject"),
+
+                            content: TextField(
+                              controller: editController,
+                            ),
+
+                            actions: [
+
+                              TextButton(
+
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+
+                                child: const Text("Cancel"),
+                              ),
+
+                              ElevatedButton(
+
+                                onPressed: () async {
+
+                                  await FirebaseFirestore.instance
+                                      .collection("subjects")
+                                      .doc(subject.id)
+                                      .update({
+
+                                    "name":
+                                    editController.text.trim(),
+
+                                  });
+
+                                  Navigator.pop(context);
+
+                                },
+
+                                child: const Text("Update"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
               );
             },
           );
