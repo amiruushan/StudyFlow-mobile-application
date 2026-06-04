@@ -51,7 +51,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       "userId":
       FirebaseAuth.instance.currentUser!.uid,
       "createdAt": Timestamp.now(),
-      "dueDate": Timestamp.fromDate(selectedDate!)
+      "dueDate": Timestamp.fromDate(selectedDate!),
+      "subject": selectedSubject,
 
     });
 

@@ -150,6 +150,8 @@ class HomeScreen extends StatelessWidget {
                       final dueDateTimestamp = task['dueDate'];
                       String dueDateText = "No due date";
 
+                      final subject = task['subject'];
+
                       if (dueDateTimestamp != null) {
                         final dueDate = dueDateTimestamp.toDate();
                         dueDateText = "${dueDate.day}/${dueDate.month}/${dueDate.year}";
@@ -279,6 +281,16 @@ class HomeScreen extends StatelessWidget {
                                             fontSize: 14,
                                           ),
                                         ),
+
+                                        const SizedBox(height: 4),
+
+                                        Text(
+                                          "Subject: $subject",
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 14,
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),
