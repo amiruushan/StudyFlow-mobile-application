@@ -34,7 +34,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   Future<void> saveTask() async {
 
-    if (taskController.text.isEmpty) return;
+    if (taskController.text.isEmpty) {
+      _showErrorSnackBar("please enter a task");
+      return;
+    }
+
+    if(selectedDate == null){
+      _showErrorSnackBar("please select a due date");
+    }
 
     await FirebaseFirestore.instance.collection("tasks").add({
 
@@ -43,12 +50,22 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       "userId":
       FirebaseAuth.instance.currentUser!.uid,
       "createdAt": Timestamp.now(),
-      "dueDate": selectedDate
+      "dueDate": Timestamp.fromDate(selectedDate!)
 
     });
 
     Navigator.pop(context);
 
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override

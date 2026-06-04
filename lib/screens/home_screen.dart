@@ -146,6 +146,15 @@ class HomeScreen extends StatelessWidget {
 
                       final isDone = task['isDone'];
 
+                      // Get due date safely
+                      final dueDateTimestamp = task['dueDate'];
+                      String dueDateText = "No due date";
+
+                      if (dueDateTimestamp != null) {
+                        final dueDate = dueDateTimestamp.toDate();
+                        dueDateText = "${dueDate.day}/${dueDate.month}/${dueDate.year}";
+                      }
+
                       return Dismissible(
 
                           key: Key(task.id),
@@ -263,7 +272,7 @@ class HomeScreen extends StatelessWidget {
 
                                         Text(
 
-                                          "Due: ${task['dueDate'].toDate().day}/${task['dueDate'].toDate().month}/${task['dueDate'].toDate().year}",
+                                          "Due: $dueDateText",
 
                                           style: const TextStyle(
                                             color: Colors.grey,
