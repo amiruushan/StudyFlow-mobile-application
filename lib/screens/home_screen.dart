@@ -6,8 +6,16 @@ import 'login_screen.dart';
 import 'edit_task_screen.dart';
 import 'subject_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  String? selectedFilterSubject;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +92,66 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
+            StreamBuilder<QuerySnapshot>(
+
+              stream: FirebaseFirestore.instance
+                  .collection("subjects")
+                  .where(
+                "userId",
+                isEqualTo: currentUser!.uid,
+              )
+                  .snapshots(),
+
+              builder: (context, snapshot) {
+
+                if (!snapshot.hasData) {
+                  return const SizedBox();
+                }
+
+                final subjects = snapshot.data!.docs;
+
+                return DropdownButtonFormField<String>(
+
+                  value: selectedFilterSubject,
+
+                  decoration: const InputDecoration(
+                    labelText: "Filter by Subject",
+                    border: OutlineInputBorder(),
+                  ),
+
+                  items: [
+
+                    const DropdownMenuItem(
+                      value: null,
+                      child: Text("All Subjects"),
+                    ),
+
+                    ...subjects.map((subject) {
+
+                      return DropdownMenuItem<String>(
+                        value: subject['name'],
+                        child: Text(subject['name']),
+                      );
+
+                    }),
+
+                  ],
+
+                  onChanged: (value) {
+
+                    setState(() {
+
+                      selectedFilterSubject = value;
+
+                    });
+
+                  },
+                );
+              },
+            ),
+
+            const SizedBox(height: 20),
+
             const Text(
               "Your Tasks",
               style: TextStyle(
@@ -127,7 +195,19 @@ class HomeScreen extends StatelessWidget {
                     );
                   }
 
-                  final tasks = snapshot.data!.docs;
+                  final allTasks = snapshot.data!.docs;
+
+                  final tasks = selectedFilterSubject == null
+
+                      ? allTasks
+
+                      : allTasks.where((task) {
+
+                    return task['subject'] ==
+                        selectedFilterSubject;
+
+                  }).toList();
+
                   final totalTasks = tasks.length;
                   final completedTasks  = tasks.where((task) => task['isDone'] == true).length;
                   final pendingTasks = tasks.where((task) => task['isDone']==false).length;
