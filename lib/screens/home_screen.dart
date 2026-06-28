@@ -72,25 +72,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
           children: [
 
-            const Text(
-              "Welcome Back 👋",
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // const Text(
+            //   "Welcome Back 👋",
+            //   style: TextStyle(
+            //     fontSize: 28,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
 
-            const SizedBox(height: 10),
+            // const SizedBox(height: 10),
 
-            const Text(
-              "Let's make today productive",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
+            // const Text(
+            //   "Let's make today productive",
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     color: Colors.grey,
+            //   ),
+            // ),
 
-            const SizedBox(height: 30),
+            // const SizedBox(height: 30),
 
             StreamBuilder<QuerySnapshot>(
 
@@ -216,190 +216,251 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? 0.0
                       : completedTasks / totalTasks;
 
-                  return ListView.builder(
+                  return Column(
+                    children: [
+                      // Statistics Row
 
-                    itemCount: totalTasks,
+                      Row(
 
-                    itemBuilder: (context, index) {
+                        children: [
 
-                      final task = tasks[index];
-
-                      final isDone = task['isDone'];
-
-                      // Get due date safely
-                      final dueDateTimestamp = task['dueDate'];
-                      String dueDateText = "No due date";
-
-                      final subject = task['subject'];
-
-                      if (dueDateTimestamp != null) {
-                        final dueDate = dueDateTimestamp.toDate();
-                        dueDateText = "${dueDate.day}/${dueDate.month}/${dueDate.year}";
-                      }
-
-                      return Dismissible(
-
-                          key: Key(task.id),
-
-                          direction: DismissDirection.endToStart,
-
-                          onDismissed: (direction) async {
-
-                            await FirebaseFirestore.instance
-                                .collection("tasks")
-                                .doc(task.id)
-                                .delete();
-
-                          },
-
-                          background: Container(
-
-                            alignment: Alignment.centerRight,
-
-                            padding: const EdgeInsets.only(right: 20),
-
-                            decoration: BoxDecoration(
-
-                              color: Colors.red,
-
-                              borderRadius: BorderRadius.circular(20),
-
-                            ),
-
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
+                          Expanded(
+                            child: buildStatsCard(
+                              "Completed",
+                              completedTasks.toString(),
+                              Colors.green,
                             ),
                           ),
-                          child: GestureDetector(
-                            onTap: () async {
 
-                              await FirebaseFirestore.instance
-                                  .collection("tasks")
-                                  .doc(task.id)
-                                  .update({
+                          const SizedBox(width: 15),
 
-                                "isDone": !isDone,
+                          Expanded(
+                            child: buildStatsCard(
+                              "Pending",
+                              pendingTasks.toString(),
+                              Colors.orange,
+                            ),
+                          ),
 
-                              });
+                        ],
+                      ),
 
-                            },
+                      const SizedBox(height: 15),
 
-                            child: Container(
+                      Row(
 
-                              margin: const EdgeInsets.only(bottom: 15),
+                        children: [
 
-                              padding: const EdgeInsets.all(20),
+                          Expanded(
+                            child: buildStatsCard(
+                              "Total",
+                              totalTasks.toString(),
+                              Colors.blue,
+                            ),
+                          ),
 
-                              decoration: BoxDecoration(
+                          const SizedBox(width: 15),
 
-                                color: Colors.white,
+                          Expanded(
+                            child: buildStatsCard(
+                              "Progress",
+                              "${(progress * 100).toInt()}%",
+                              Colors.red,
+                            ),
+                          ),
 
-                                borderRadius: BorderRadius.circular(20),
+                        ],
+                      ),
 
-                              ),
+                      const SizedBox(height: 20),
+                      Expanded(
+                        child: ListView.builder(
 
-                              child: Row(
+                          itemCount: totalTasks,
 
-                                children: [
+                          itemBuilder: (context, index) {
 
-                                  CircleAvatar(
-                                    backgroundColor:
-                                    Colors.blue.withOpacity(0.2),
+                            final task = tasks[index];
 
-                                    child: Icon(
+                            final isDone = task['isDone'];
 
-                                      isDone
-                                          ? Icons.check_circle
-                                          : Icons.task_alt,
+                            // Get due date safely
+                            final dueDateTimestamp = task['dueDate'];
+                            String dueDateText = "No due date";
 
-                                      color:
-                                      isDone
-                                          ? Colors.green
-                                          : Colors.blue,
-                                    ),
+                            final subject = task['subject'];
+
+                            if (dueDateTimestamp != null) {
+                              final dueDate = dueDateTimestamp.toDate();
+                              dueDateText = "${dueDate.day}/${dueDate.month}/${dueDate.year}";
+                            }
+
+                            return Dismissible(
+
+                                key: Key(task.id),
+
+                                direction: DismissDirection.endToStart,
+
+                                onDismissed: (direction) async {
+
+                                  await FirebaseFirestore.instance
+                                      .collection("tasks")
+                                      .doc(task.id)
+                                      .delete();
+
+                                },
+
+                                background: Container(
+
+                                  alignment: Alignment.centerRight,
+
+                                  padding: const EdgeInsets.only(right: 20),
+
+                                  decoration: BoxDecoration(
+
+                                    color: Colors.red,
+
+                                    borderRadius: BorderRadius.circular(20),
+
                                   ),
 
-                                  const SizedBox(width: 15),
+                                  child: const Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                child: GestureDetector(
+                                  onTap: () async {
 
-                                  Expanded(
+                                    await FirebaseFirestore.instance
+                                        .collection("tasks")
+                                        .doc(task.id)
+                                        .update({
 
-                                    child: Column(
+                                      "isDone": !isDone,
 
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                    });
+
+                                  },
+
+                                  child: Container(
+
+                                    margin: const EdgeInsets.only(bottom: 15),
+
+                                    padding: const EdgeInsets.all(20),
+
+                                    decoration: BoxDecoration(
+
+                                      color: Colors.white,
+
+                                      borderRadius: BorderRadius.circular(20),
+
+                                    ),
+
+                                    child: Row(
 
                                       children: [
 
-                                        Text(
+                                        CircleAvatar(
+                                          backgroundColor:
+                                          Colors.blue.withOpacity(0.2),
 
-                                          task['title'],
+                                          child: Icon(
 
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w600,
-
-                                            decoration:
                                             isDone
-                                                ? TextDecoration.lineThrough
-                                                : TextDecoration.none,
+                                                ? Icons.check_circle
+                                                : Icons.task_alt,
 
                                             color:
                                             isDone
-                                                ? Colors.grey
-                                                : Colors.black,
+                                                ? Colors.green
+                                                : Colors.blue,
                                           ),
                                         ),
 
-                                        const SizedBox(height: 4),
+                                        const SizedBox(width: 15),
 
-                                        Text(
+                                        Expanded(
 
-                                          "Due: $dueDateText",
+                                          child: Column(
 
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 14,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                                            children: [
+
+                                              Text(
+
+                                                task['title'],
+
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w600,
+
+                                                  decoration:
+                                                  isDone
+                                                      ? TextDecoration.lineThrough
+                                                      : TextDecoration.none,
+
+                                                  color:
+                                                  isDone
+                                                      ? Colors.grey
+                                                      : Colors.black,
+                                                ),
+                                              ),
+
+                                              const SizedBox(height: 4),
+
+                                              Text(
+
+                                                "Due: $dueDateText",
+
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+
+                                              const SizedBox(height: 4),
+
+                                              Text(
+                                                "Subject: $subject",
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14,
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
 
-                                        const SizedBox(height: 4),
+                                        IconButton(onPressed: (){
 
-                                        Text(
-                                          "Subject: $subject",
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 14,
-                                          ),
-                                        )
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => EditTaskScreen(
+                                                    taskId: task.id,
+                                                    oldTitle: task['title'],
+                                                  oldDueDate: task['dueDate'],
+                                                )
+                                            )
+                                          );
+
+                                        },
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              color: Colors.orange,
+                                            ),
+                                        ),
                                       ],
                                     ),
                                   ),
-
-                                  IconButton(onPressed: (){
-
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => EditTaskScreen(
-                                              taskId: task.id,
-                                              oldTitle: task['title'],
-                                            oldDueDate: task['dueDate'],
-                                          )
-                                      )
-                                    );
-
-                                  },
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        color: Colors.orange,
-                                      ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                      );
-                    },
+                                ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
@@ -444,30 +505,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             const SizedBox(height: 15),
-
-            Row(
-
-              children: [
-
-                Expanded(
-                  child: buildActionCard(
-                    Icons.task,
-                    "Tasks",
-                    Colors.purple,
-                  ),
-                ),
-
-                const SizedBox(width: 15),
-
-                Expanded(
-                  child: buildActionCard(
-                    Icons.bar_chart,
-                    "Progress",
-                    Colors.red,
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -493,6 +530,52 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  //hhh
+  Widget buildStatsCard(
+      String title,
+      String value,
+      Color color,
+      ) {
+
+    return Container(
+
+      padding: const EdgeInsets.all(20),
+
+      decoration: BoxDecoration(
+
+        color: Colors.white,
+
+        borderRadius: BorderRadius.circular(20),
+
+      ),
+
+      child: Column(
+
+        children: [
+
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget buildActionCard(
       IconData icon,
